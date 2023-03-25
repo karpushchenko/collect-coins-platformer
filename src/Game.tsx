@@ -1,23 +1,21 @@
 import { BlurFilter } from 'pixi.js';
-import { Stage, Container, Sprite, Text } from '@pixi/react';
-import { useMemo } from 'react';
+import { Stage, Container, Text } from '@pixi/react';
+import {useMemo} from 'react';
 import {Coin} from "./components/Coin";
+import {Character} from "./components/Character";
 
 export const Game = () =>
 {
     const blurFilter = useMemo(() => new BlurFilter(4), []);
+    let handleClick = () => { };
 
     return (
-        <Stage>
-            <Sprite
-                image="https://pixijs.io/pixi-react/img/bunny.png"
-                x={400}
-                y={270}
-                anchor={{ x: 0.5, y: 0.5 }}
-            />
-
+        <Stage options={{backgroundColor: 0xeef1f5}} onPointerDown={() => handleClick()}>
             <Container x={400} y={330}>
                 <Coin></Coin>
+                <Character toggle={ (toggle: () => void) => {
+                    handleClick = toggle;
+                } } />
                 <Text text="Hello World" anchor={{ x: 0.5, y: 0.5 }} filters={[blurFilter]} />
             </Container>
         </Stage>
