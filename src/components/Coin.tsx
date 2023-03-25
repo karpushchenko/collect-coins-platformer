@@ -1,9 +1,9 @@
 import {Container, AnimatedSprite} from "@pixi/react";
-import {Assets, Spritesheet, Texture} from "pixi.js"
-import {useState, useEffect} from "react";
+import {Assets, Spritesheet, Texture, Sprite as SpriteType} from "pixi.js"
+import {useState, useEffect, forwardRef, Ref} from "react";
 
 
-export const Coin = () => {
+export const Coin = forwardRef((props, ref: Ref<SpriteType>) => {
     const spritesheet = "./assets/gold_anim.json";
     const [frames, setFrames] = useState<Texture[]>([]);
 
@@ -24,8 +24,9 @@ export const Coin = () => {
         return null;
     }
 
+
     return (
-        <Container x={0} y={0}>
+        <Container x={0} y={0} ref={ref}>
             <AnimatedSprite
                 animationSpeed={0.25}
                 isPlaying={true}
@@ -34,4 +35,4 @@ export const Coin = () => {
             />
         </Container>
     );
-};
+});

@@ -1,6 +1,6 @@
 import {Sprite, useTick, AnimatedSprite, Container} from '@pixi/react';
-import {BaseTexture, Rectangle, Spritesheet, Texture} from 'pixi.js';
-import {useCallback, useEffect, useState} from "react";
+import {BaseTexture, Rectangle, Spritesheet, Texture, Sprite as SpriteType} from 'pixi.js';
+import {forwardRef, Ref, useCallback, useEffect, useState} from "react";
 
 const
 direction = -1, //to Top
@@ -15,15 +15,7 @@ interface CharacterPropType {
     }
 }
 
-export const Character = ({toggle, position}: CharacterPropType) => {
-    const toggleJump = useCallback((): void => {
-        setIsJumping(true);
-        setJumpTime(0);
-    }, []);
-
-    useEffect(() => {
-        toggle && toggle(toggleJump);
-    }, [toggle, toggleJump]);
+export const Character = forwardRef(({toggle, position}: CharacterPropType, ref: Ref<SpriteType> | undefined) => {
 
     const yPosition = position?.y || 0;
     const xPosition = position?.x || 0;
@@ -33,6 +25,17 @@ export const Character = ({toggle, position}: CharacterPropType) => {
     const [jumpTime, setJumpTime] = useState(0);
     const x = xPosition;
     const [y, setY] = useState(yPosition);
+
+    const toggleJump = useCallback((): void => {
+        if(!isJumping){
+            setIsJumping(true);
+            setJumpTime(0);
+        }
+    },[isJumping]);
+
+    useEffect(() => {
+        toggle && toggle(toggleJump);
+    }, [toggle, toggleJump]);
 
     // custom ticker
     useTick(delta => {
@@ -96,6 +99,7 @@ export const Character = ({toggle, position}: CharacterPropType) => {
             {
                 isJumping ?
                     <Sprite
+                        ref={ref}
                         texture={jumpTexture}
                         anchor={0.5}
                         x={x}
@@ -113,4 +117,4 @@ export const Character = ({toggle, position}: CharacterPropType) => {
             }
         </>
     );
-};
+});
