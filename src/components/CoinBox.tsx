@@ -1,4 +1,4 @@
-import {Container, Sprite, useTick} from "@pixi/react";
+import {Container, Sprite, useApp, useTick} from "@pixi/react";
 import {Sprite as SpriteType} from "pixi.js"
 import {useState, useEffect, forwardRef, Ref} from "react";
 import {Coin} from "./Coin";
@@ -26,7 +26,12 @@ export const CoinBox = forwardRef(({position}: CoinBoxPropType, ref: Ref<SpriteT
     const addCoin = useGameStore((state) => state.addCoin);
 
     const [jumpTime, setJumpTime] = useState(0);
+    const [blockSpeed, setBlockSpeed] = useState(3);
     const [y, setY] = useState(0);
+
+    const [boxX, setBoxX] = useState(xPosition);
+
+    const app = useApp();
 
     useEffect((): void => {
         if (coinFlying) {
@@ -36,6 +41,7 @@ export const CoinBox = forwardRef(({position}: CoinBoxPropType, ref: Ref<SpriteT
     }, [coinFlying]);
 
     useTick(delta => {
+        animate();
         if (coinFlying) {
             const jumpHeight = (-gravity / 2) * Math.pow(jumpTime, 2) + power * jumpTime;
             if (jumpHeight < 0) {
@@ -49,11 +55,24 @@ export const CoinBox = forwardRef(({position}: CoinBoxPropType, ref: Ref<SpriteT
         }
     });
 
+    const animate = () => {
+        let newX = boxX - blockSpeed;
+        const halfScreen = app.screen.width;
+        // check if the rectangle has reached the edge of the screen
+        if (newX < - app.screen.width) {
+            newX = halfScreen;
+            setBlockSpeed(Math.floor(Math.random() * 4) + 1)
+        }
+
+        setBoxX(newX);
+    };
+
     return (
-        <Container x={xPosition} y={yPosition} ref={ref}>
+        <Container x={boxX} y={yPosition} ref={ref}>
             <Coin position={{y: y}}/>
             <Sprite
                 image="../assets/box.png"
+
                 anchor={0.5}
             />
         </Container>
