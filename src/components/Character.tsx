@@ -1,36 +1,50 @@
-import {Sprite, useTick, AnimatedSprite} from '@pixi/react';
+import {Sprite, useTick, AnimatedSprite, Container} from '@pixi/react';
 import {BaseTexture, Rectangle, Spritesheet, Texture} from 'pixi.js';
 import {useCallback, useEffect, useState} from "react";
 
-let i = 0;
+const
+direction = -1, //to Top
+gravity = 1,
+power = 20;
+
 interface CharacterPropType {
     toggle: (callback: () => void) => void;
+    position?: {
+        x?: number,
+        y?: number
+    }
 }
-export const Character = ({toggle} : CharacterPropType) => {
+
+export const Character = ({toggle, position}: CharacterPropType) => {
     const toggleJump = useCallback((): void => {
         setIsJumping(true);
-        setTimeout(() => {
-            setIsJumping(false);
-        }, 1000);
+        setJumpTime(0);
     }, []);
 
     useEffect(() => {
         toggle && toggle(toggleJump);
     }, [toggle, toggleJump]);
 
+    const yPosition = position?.y || 0;
+    const xPosition = position?.x || 0;
+
     // states
     const [isJumping, setIsJumping] = useState(false);
-    const [x, setX] = useState(0);
-    const [y, setY] = useState(0);
-    const [rotation, setRotation] = useState(0);
+    const [jumpTime, setJumpTime] = useState(0);
+    const x = xPosition;
+    const [y, setY] = useState(yPosition);
 
     // custom ticker
     useTick(delta => {
-        if(isJumping){
-            i += 0.05 * delta;
-            setX(Math.sin(i) * 100);
-            setY(Math.sin(i/1.5) * 100);
-            setRotation(-10 + Math.sin(i/10 + Math.PI * 2) * 10);
+        if (isJumping) {
+            const jumpHeight = (-gravity / 2) * Math.pow(jumpTime, 2) + power * jumpTime;
+            if (jumpHeight < 0) {
+                setIsJumping(false)
+                setY(yPosition);
+                return;
+            }
+            setY(yPosition + (jumpHeight * direction));
+            setJumpTime(jumpTime + delta);
         }
     });
 
@@ -72,12 +86,10 @@ export const Character = ({toggle} : CharacterPropType) => {
         characterData
     );
 
-    const jumpFrame = new Rectangle(0,0, 105, spritesheet.baseTexture.height);
+    const jumpFrame = new Rectangle(0, 0, 105, spritesheet.baseTexture.height);
     const jumpTexture = new Texture(spritesheet.baseTexture, jumpFrame);
 
     spritesheet.parse();
-
-    console.log(spritesheet)
 
     return (
         <>
@@ -88,15 +100,16 @@ export const Character = ({toggle} : CharacterPropType) => {
                         anchor={0.5}
                         x={x}
                         y={y}
-                        rotation={rotation}
                     />
                     :
+                    <Container x={x} y={y}>
                     <AnimatedSprite
                         animationSpeed={0.05}
                         isPlaying={true}
                         textures={spritesheet.animations.walk}
                         anchor={0.5}
                     />
+                    </Container>
             }
         </>
     );
