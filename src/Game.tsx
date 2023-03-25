@@ -4,17 +4,28 @@ import {useEffect, useRef} from 'react';
 import {Character} from "./components/Character";
 import useGameStore from "./store/store";
 import {CoinBox} from "./components/CoinBox";
+import load from "./loader/load";
 
 export const Game = () => {
     let handleClick = () => {
-    };
-    let handleCoin = () => {
     };
 
     const coinBoxSpriteRef = useRef<SpriteType>(null);
     const characterSpriteRef = useRef<SpriteType>(null);
 
-    const coins = useGameStore((state) => state.coins)
+    const coins = useGameStore((state) => state.coins);
+    const loaded = useGameStore((state) => state.loaded);
+    const confirmLoad = useGameStore((state) => state.confirmLoad);
+    const addCoin = useGameStore((state) => state.addCoin);
+    const setCoinFlying = useGameStore((state) => state.setCoinFlying);
+
+    useEffect(() => {
+        load()
+            .then(() => {
+                    confirmLoad()
+                }
+            );
+    }, [confirmLoad])
 
     useEffect(() => {
         const checkCollision = () => {
@@ -23,7 +34,7 @@ export const Game = () => {
 
             if (coinBoxSprite && characterSprite) {
                 if (coinBoxSprite.getBounds().intersects(characterSprite.getBounds())) {
-                    handleCoin()
+                    setCoinFlying(true);
                 }
             }
         };
@@ -34,28 +45,27 @@ export const Game = () => {
         return () => {
             ticker.remove(checkCollision);
         };
-    }, []);
+    }, [addCoin, setCoinFlying]);
 
     return (
         <Stage options={{backgroundColor: 0xeef1f5}} onPointerDown={() => handleClick()}>
-            <Container x={400} y={330}>
-                <CoinBox
-                    toggle={(toggle: () => void) => {
-                        handleCoin = toggle;
-                    }}
-                    position={{y: -165}}
-                    ref={coinBoxSpriteRef}
-
-                />
-                <Character
-                    toggle={(toggle: () => void) => {
-                        handleClick = toggle;
-                    }}
-                    position={{y: 150}}
-                    ref={characterSpriteRef}
-                />
-                <Text text={`Coins: ${coins}`} y={-300} x={200} anchor={{x: 0.5, y: 0.5}}/>
-            </Container>
+            {
+                loaded &&
+                <Container x={400} y={330}>
+                    <CoinBox
+                        position={{y: -165}}
+                        ref={coinBoxSpriteRef}
+                    />
+                    <Character
+                        toggle={(toggle: () => void) => {
+                            handleClick = toggle;
+                        }}
+                        position={{y: 150}}
+                        ref={characterSpriteRef}
+                    />
+                    <Text text={`Coins: ${coins}`} y={-300} x={200} anchor={{x: 0.5, y: 0.5}}/>
+                </Container>
+            }
         </Stage>
     );
 };
