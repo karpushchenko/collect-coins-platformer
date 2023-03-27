@@ -1,6 +1,9 @@
 import {Container, Sprite, useApp} from "@pixi/react";
 
-export const Background = () => {
+interface BackgroundPropType {
+    onpointerdown: (callback: () => void) => void;
+}
+export const Background = ({onpointerdown}:BackgroundPropType) => {
 
     const app = useApp();
 
@@ -9,6 +12,8 @@ export const Background = () => {
             <Sprite
                 image="../assets/background.png"
                 anchor={{x: 0.5, y: 1}}
+                pointerdown={onpointerdown}
+                interactive
             />
         </Container>
     );

@@ -64,13 +64,13 @@ export const Game = () => {
     }, [addCoin, setCoinFlying]);
 
     return (
-        <Stage width={canvasWidth} options={{backgroundColor: 0xeef1f5}} onPointerDown={() => handleClick()}>
+        <Stage width={canvasWidth} options={{backgroundColor: 0xeef1f5}}>
             {
                 <Container x={canvasWidth / 2} y={330}>
                     {
                         loaded && gameStarted ?
                             <>
-                                <Background/>
+                                <Background onpointerdown={() => handleClick()}/>
                                 {
                                     timer > 0 ?
                                         <>
@@ -133,7 +133,7 @@ export const Game = () => {
                                             dropShadowAngle: Math.PI / 6,
                                             dropShadowDistance: 6,
                                             wordWrap: true,
-                                            wordWrapWidth: 440,
+                                            wordWrapWidth: 300,
                                         })
                                     }
                                 />
