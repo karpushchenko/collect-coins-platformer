@@ -7,6 +7,7 @@ import {CoinBox} from "./components/CoinBox";
 import load from "./loader/load";
 import {Background} from "./components/Background";
 import {Timer} from "./components/Timer";
+import {CoinsCollection} from "./components/CoinsCollection";
 
 export const Game = () => {
     let handleClick = () => {
@@ -90,6 +91,7 @@ export const Game = () => {
                                         </>
                                         :
                                         <>
+                                            <CoinsCollection coins={coins}/>
                                             <Text text={`Time is up!`} y={-50} x={0} anchor={{x: 0.5, y: 0.5}}/>
                                             <Text text={`Coins: ${coins}`} y={0} x={0} anchor={{x: 0.5, y: 0.5}}/>
                                             <Text text={`Max coins: ${maxCoins}`} y={50} x={0} anchor={{x: 0.5, y: 0.5}}/>
