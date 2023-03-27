@@ -1,6 +1,6 @@
 import {Sprite, useTick, AnimatedSprite, Container} from '@pixi/react';
 import {Texture, Sprite as SpriteType} from 'pixi.js';
-import {forwardRef, Ref, useCallback, useEffect, useState} from "react";
+import {forwardRef, Ref, useCallback, useEffect, useMemo, useState} from "react";
 
 const
     direction = -1, //to Top
@@ -32,6 +32,8 @@ export const Character = forwardRef(({toggle, position}: CharacterPropType, ref:
             setJumpTime(0);
         }
     }, [isJumping]);
+
+    const walkTextures = useMemo(() => [Texture.from('walk1'), Texture.from('walk2')], []);
 
     useEffect(() => {
         toggle && toggle(toggleJump);
@@ -65,9 +67,9 @@ export const Character = forwardRef(({toggle, position}: CharacterPropType, ref:
                     :
                     <Container x={x} y={y}>
                         <AnimatedSprite
-                            animationSpeed={0.05}
+                            animationSpeed={0.07}
                             isPlaying={true}
-                            textures={[Texture.from('walk1'), Texture.from('walk2')]}
+                            textures={walkTextures}
                             anchor={0.5}
                         />
                     </Container>
