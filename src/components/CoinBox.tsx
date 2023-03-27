@@ -19,7 +19,7 @@ interface CoinBoxPropType {
 export const CoinBox = forwardRef(({position}: CoinBoxPropType, ref: Ref<SpriteType>) => {
 
     const yPosition = position?.y || 0;
-    const xPosition = position?.x || 0;
+    const xPosition = position?.x || 300;
 
     const coinFlying = useGameStore((state) => state.coinFlying);
     const setCoinFlying = useGameStore((state) => state.setCoinFlying);
@@ -63,7 +63,6 @@ export const CoinBox = forwardRef(({position}: CoinBoxPropType, ref: Ref<SpriteT
             newX = halfScreen;
             setBlockSpeed(Math.floor(Math.random() * 4) + 1)
         }
-
         setBoxX(newX);
     };
 
